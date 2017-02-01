@@ -16,6 +16,12 @@ class ContactsController extends Controller
         'email' => ['required', 'email'],
         'photo' => ['mimes:jpg,jpeg,png,gif,bmp']
     ];
+    private $upload_dir = 'public/uploads';
+
+    public function __construct()
+    {
+        $this->upload_dir = base_path() . '/' . $this->upload_dir;
+    }
 
     public function index(Request $request)
     {
@@ -59,7 +65,7 @@ class ContactsController extends Controller
         {
             $photo       = $request->file('photo');
             $fileName    = $photo->getClientOriginalName();
-            $destination = base_path() . '/public/uploads';
+            $destination = $this->upload_dir;
             $photo->move($destination, $fileName);
 
             $data['photo'] = $fileName;
@@ -74,8 +80,33 @@ class ContactsController extends Controller
 
         $data = $this->getRequest($request);
         $contact = Contact::find($id);
+
+        $oldPhoto = $contact->photo;
+
         $contact->update($data);
 
+        if($oldPhoto !== $contact->photo)
+        {
+            $this->removePhoto($oldPhoto);
+        }
+
         return redirect('contacts')->with('message', 'Contact Updated!');
+    }
+
+    public function destroy($id)
+    {
+        $contact = Contact::find($id);
+        $contact->delete();
+        $this->removePhoto($contact->photo);
+        return redirect('contacts')->with('message', 'Contact Deleted!');
+    }
+
+    public function removePhoto($photo)
+    {
+        if(! empty($photo))
+        {
+            $filePath =  $this->upload_dir . '/' . $photo;
+            if(file_exists($filePath)) unlink($filePath);
+        }
     }
 }
