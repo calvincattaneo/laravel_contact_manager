@@ -8,8 +8,9 @@
     <title>My Contact</title>
 
     <!-- Bootstrap -->
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/css/custom.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/custom.css" rel="stylesheet">
+    <link href="/assets/css/jasny-bootstrap.min.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -37,7 +38,7 @@
         <!-- /.navbar-header -->
         <div class="collapse navbar-collapse" id="navbar-collapse">
           <div class="nav navbar-right navbar-btn">
-            <a href="form.html" class="btn btn-default">
+            <a href="{{ route("contacts.create") }}" class="btn btn-default">
               <i class="glyphicon glyphicon-plus"></i>
               Add Contact
             </a>
@@ -50,26 +51,32 @@
     <div class="container">
       <div class="row">
         <div class="col-md-3">
-          <div class="list-group">
+            <div class="list-group">
+              <?php $selected_group = Request::get('group_id') ?>
+              <a href="{{ route('contacts.index') }}" class="list-group-item {{ empty($selected_group) ? 'active' : '' }}">All Contact <span class="badge">{{ App\Contact::count() }}</span></a>
 
-            <?php $selected_group = Request::get('group_id') ?>
-            <a href="{{ route('contacts.index') }}" class="list-group-item {{ empty($selected_group) ? 'active' : '' }}">All Contact <span class="badge">{{ App\Contact::count() }}</span></a>
-
-            @foreach (App\Group::all() as $group)
-                <a href="{{ route('contacts.index', ['group_id' => $group->id]) }}" class="list-group-item {{ empty($selected_group) ? 'active' : '' }}">{{ $group->name }} <span class="badge">{{ $group->contacts->count() }}</span></a>
-            @endforeach
-          </div>
+              @foreach (App\Group::all() as $group)
+                  <a href="{{ route('contacts.index', ['group_id' => $group->id]) }}" class="list-group-item {{ $selected_group == $group->id ? 'active' : '' }}">{{ $group->name }} <span class="badge">{{ $group->contacts->count() }}</span></a>
+              @endforeach
+            </div>
         </div><!-- /.col-md-3 -->
 
         <div class="col-md-9">
-          @yield('content')
+            @if (session('message'))
+                <div class='alert alert-success'>
+                    {{ session('message') }}
+                </div>
+            @endif
+
+            @yield('content')
         </div>
       </div>
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="assets/js/jquery.min.js"></script>
+    <script src="/assets/js/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/jasny-bootstrap.min.js"></script>
   </body>
 </html>

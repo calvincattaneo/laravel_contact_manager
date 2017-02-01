@@ -15,9 +15,9 @@ class GroupTableSeeder extends Seeder
         DB::table('groups')->truncate();
 
         $groups = [
-          ['id' => 1, 'name' => 'Family', 'created_at' => new DateTime, 'updated_at' => new DateTime],
-          ['id' => 2, 'name' => 'Friends', 'created_at' => new DateTime, 'updated_at' => new DateTime],
-          ['id' => 3, 'name' => 'Clients', 'created_at' => new DateTime, 'updated_at' => new DateTime],
+            ['id' => 1, 'name' => 'Family', 'created_at' => new DateTime, 'updated_at' => new DateTime],
+            ['id' => 2, 'name' => 'Friends', 'created_at' => new DateTime, 'updated_at' => new DateTime],
+            ['id' => 3, 'name' => 'Clients', 'created_at' => new DateTime, 'updated_at' => new DateTime],
         ];
 
         DB::table('groups')->insert($groups);
