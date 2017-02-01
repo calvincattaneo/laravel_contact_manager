@@ -40,7 +40,7 @@
         </div>
 
         <div class="form-group">
-          <label for="address" class="control-label col-md-3">Address</label>
+          <label for="name" class="control-label col-md-3">Address</label>
           <div class="col-md-8">
             {!! Form::textarea('address', null, ['class' => 'form-control', 'rows' => 2]) !!}
           </div>
@@ -70,8 +70,15 @@
       <div class="col-md-4">
         <div class="fileinput fileinput-new" data-provides="fileinput">
           <div class="fileinput-new thumbnail" style="width: 150px; height: 150px;">
-            <?php $photo = ! is_null($contact->photo) ? $contact->photo : 'default.png' ?>
-            {!! Html::image('uploads/' . $photo, $contact->name, ['width' => 150, 'height' => 150]) !!}
+            <?php
+                if (isset($contact))
+                {
+                  {
+                      $photo = ! empty($contact->photo) ? $contact->photo : 'default.png';
+                  }
+                }
+            ?>
+              {!! Html::image('uploads/' . @$photo, "Choose photo", ['width' => 150, 'height' => 150]) !!}
           </div>
           <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
           <div class="text-center">

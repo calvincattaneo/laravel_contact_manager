@@ -11,8 +11,10 @@
                 <div class="media">
                   <div class="media-left">
                     <a href="#">
-                      <?php $photo = ! is_null($contact->photo) ? $contact->photo : 'default.png' ?>
-                      {!! Html::image('uploads/' . $photo, $contact->name, ['class' => 'media-object', 'width' => 100, 'height' => 100]) !!}
+
+                        <?php $photo = ! is_null($contact->photo) ? $contact->photo : 'default.png' ?>
+                        {!! Html::image('uploads/' . $photo, $contact->name, ['class' => 'media-object', 'width' => 100, 'height' => 100]) !!}
+
                     </a>
                   </div>
                   <div class="media-body">

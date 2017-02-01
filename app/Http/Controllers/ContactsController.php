@@ -45,25 +45,27 @@ class ContactsController extends Controller
         $this->validate($request, $this->rules);
 
         $data = $this->getRequest($request);
+
         Contact::create($data);
 
         return redirect('contacts')->with('message', 'Contact Saved!');
     }
 
-    public function getRequest(Request $request)
+    private function getRequest(Request $request)
     {
-      $data = $request->all();
+        $data = $request->all();
 
-      if($request->hasFile('photo'))
-      {
-          $photo = $request->file('photo');
-          $fileName = $photo->getClientOriginalName();
-          $destination = base_path() . '/public/uploads';
-          $photo->move($destination, $fileName);
-          $data['photo'] = $fileName;
-      }
+        if ($request->hasFile('photo'))
+        {
+            $photo       = $request->file('photo');
+            $fileName    = $photo->getClientOriginalName();
+            $destination = base_path() . '/public/uploads';
+            $photo->move($destination, $fileName);
 
-      return $data;
+            $data['photo'] = $fileName;
+        }
+
+        return $data;
     }
 
     public function update($id, Request $request)
