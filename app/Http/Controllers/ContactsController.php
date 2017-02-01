@@ -13,7 +13,8 @@ class ContactsController extends Controller
     private $rules = [
         'name' => ['required', 'min:5'],
         'company' => ['required'],
-        'email' => ['required', 'email']
+        'email' => ['required', 'email'],
+        'photo' => ['mimes:jpg,jpeg,png,gif,bmp']
     ];
 
     public function index(Request $request)
@@ -43,17 +44,35 @@ class ContactsController extends Controller
     {
         $this->validate($request, $this->rules);
 
-        Contact::create($request->all());
+        $data = $this->getRequest($request);
+        Contact::create($data);
 
         return redirect('contacts')->with('message', 'Contact Saved!');
+    }
+
+    public function getRequest(Request $request)
+    {
+      $data = $request->all();
+
+      if($request->hasFile('photo'))
+      {
+          $photo = $request->file('photo');
+          $fileName = $photo->getClientOriginalName();
+          $destination = base_path() . '/public/uploads';
+          $photo->move($destination, $fileName);
+          $data['photo'] = $fileName;
+      }
+
+      return $data;
     }
 
     public function update($id, Request $request)
     {
         $this->validate($request, $this->rules);
 
+        $data = $this->getRequest($request);
         $contact = Contact::find($id);
-        $contact->update($request->all());
+        $contact->update($data);
 
         return redirect('contacts')->with('message', 'Contact Updated!');
     }
