@@ -54,3 +54,11 @@ body {
   line-height: 1.428571429;
   border-radius: 15px;
 }
+
+/* Fix the search results displayed behind the search bar by Sergio Tupaz */
+.ui-autocomplete
+{
+    position:relative;
+    cursor:default;
+    z-index:9999 !important;
+}
