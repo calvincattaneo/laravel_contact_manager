@@ -25,12 +25,21 @@ class ContactsController extends Controller
 
     public function index(Request $request)
     {
-        if ($group_id = ($request->get('group_id'))) {
-            $contacts = Contact::where('group_id', $group_id)->orderBy('id', 'desc')->paginate($this->limit);
-        }
-        else {
-            $contacts = Contact::orderBy('id', 'desc')->paginate($this->limit);
-        }
+        $contacts = Contact::where(function($query) use ($request) {
+                            if ($group_id = ($request->get('group_id'))) {
+                                $query->where('group_id', $group_id);
+                            }
+
+                            if ( ($term = $request->get("term")) )
+                            {
+                                $keywords = '%' . $term . '%';
+                                $query->orWhere("name", 'LIKE', $keywords);
+                                $query->orWhere("company", 'LIKE', $keywords);
+                                $query->orWhere("email", 'LIKE', $keywords);
+                            }
+                        })
+                        ->orderBy('id', 'desc')
+                        ->paginate($this->limit);
 
     	return view('contacts.index', compact('contacts'));
     }
@@ -78,15 +87,13 @@ class ContactsController extends Controller
     {
         $this->validate($request, $this->rules);
 
-        $data = $this->getRequest($request);
         $contact = Contact::find($id);
-
         $oldPhoto = $contact->photo;
 
+        $data = $this->getRequest($request);
         $contact->update($data);
 
-        if($oldPhoto !== $contact->photo)
-        {
+        if ($oldPhoto !== $contact->photo) {
             $this->removePhoto($oldPhoto);
         }
 
@@ -96,17 +103,21 @@ class ContactsController extends Controller
     public function destroy($id)
     {
         $contact = Contact::find($id);
+
         $contact->delete();
+
         $this->removePhoto($contact->photo);
+
         return redirect('contacts')->with('message', 'Contact Deleted!');
     }
 
-    public function removePhoto($photo)
+    private function removePhoto($photo)
     {
-        if(! empty($photo))
+        if ( ! empty($photo))
         {
-            $filePath =  $this->upload_dir . '/' . $photo;
-            if(file_exists($filePath)) unlink($filePath);
+            $file_path = $this->upload_dir . '/' . $photo;
+
+            if ( file_exists($file_path) ) unlink($file_path);
         }
     }
 }
